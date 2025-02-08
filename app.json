@@ -1,0 +1,128 @@
+{
+  "_comment": "This file is generated. Please edit .homeycompose/app.json instead.",
+  "id": "com.fjaer.dynalite.envision",
+  "version": "1.0.0",
+  "compatibility": ">=5.0.0",
+  "sdk": 3,
+  "platforms": [
+    "local"
+  ],
+  "name": {
+    "en": "Phillips Dynalite Envision Gateway"
+  },
+  "description": {
+    "en": "Controlls lights via the Dynalite Envision Gateway."
+  },
+  "category": [
+    "lights"
+  ],
+  "permissions": [],
+  "images": {
+    "small": "/assets/images/small.png",
+    "large": "/assets/images/large.png",
+    "xlarge": "/assets/images/xlarge.png"
+  },
+  "author": {
+    "name": "Håvard Fjær",
+    "email": "homey@fjaer.com"
+  },
+  "flow": {
+    "actions": [
+      {
+        "title": {
+          "en": "Turn On"
+        },
+        "hint": {
+          "en": "Turns on a light by dimming to 100%."
+        },
+        "id": "turn-on-light"
+      }
+    ]
+  },
+  "drivers": [
+    {
+      "name": {
+        "en": "Dynalite Gateway"
+      },
+      "class": "light",
+      "capabilities": [
+        "dim",
+        "onoff"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/dynalite-gateway/assets/images/small.png",
+        "large": "/drivers/dynalite-gateway/assets/images/large.png",
+        "xlarge": "/drivers/dynalite-gateway/assets/images/xlarge.png"
+      },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
+      "id": "dynalite-gateway",
+      "settings": [
+        {
+          "id": "area",
+          "type": "number",
+          "label": {
+            "en": "Area"
+          },
+          "value": 0,
+          "hint": {
+            "en": "The area the light is located in."
+          }
+        },
+        {
+          "id": "channel",
+          "type": "number",
+          "label": {
+            "en": "Channel"
+          },
+          "value": 0,
+          "hint": {
+            "en": "The channel used to control the light."
+          }
+        },
+        {
+          "id": "fade",
+          "type": "number",
+          "label": {
+            "en": "Fade"
+          },
+          "value": 0.2,
+          "hint": {
+            "en": "The time taken to fade the light from one state to another, in seconds."
+          }
+        }
+      ]
+    }
+  ],
+  "discovery": {
+    "x": {
+      "type": "mac",
+      "mac": {
+        "manufacturer": [
+          [
+            0,
+            23,
+            136
+          ]
+        ]
+      }
+    }
+  }
+}

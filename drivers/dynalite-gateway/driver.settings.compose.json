@@ -1,0 +1,23 @@
+[
+    {
+      "id": "area",
+      "type": "number",
+      "label": { "en": "Area" },
+      "value": 0,
+      "hint": { "en": "The area the light is located in." }
+    },
+    {
+      "id": "channel",
+      "type": "number",
+      "label": { "en": "Channel" },
+      "value": 0,
+      "hint": { "en": "The channel used to control the light." }
+    },
+    {
+      "id": "fade",
+      "type": "number",
+      "label": { "en": "Fade" },
+      "value": 0.2,
+      "hint": { "en": "The time taken to fade the light from one state to another, in seconds." }
+    }
+  ]
