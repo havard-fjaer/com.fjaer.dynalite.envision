@@ -1,13 +1,13 @@
 import { randomUUID } from 'crypto';
 import Homey from 'homey';
 
-module.exports = class MyDriver extends Homey.Driver {
+module.exports = class DynaliteDriver extends Homey.Driver {
 
   /**
    * onInit is called when the driver is initialized.
    */
   async onInit() {
-    this.log('MyDriver has been initialized');
+    this.log('Dynalite Light driver has been initialized');
   }
 
   /**

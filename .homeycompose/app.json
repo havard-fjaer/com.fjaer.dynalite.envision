@@ -10,7 +10,8 @@
     "en": "Phillips Dynalite Envision Gateway"
   },
   "description": {
-    "en": "Controls lights via the Dynalite Envision Gateway."
+    "en": "Controls lights via the Dynalite Envision Gateway.",
+    "no": "Kontrollerer lys via Dynalite Envision Gateway."
   },
   "category": [
     "lights"

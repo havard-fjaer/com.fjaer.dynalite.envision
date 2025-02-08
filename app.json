@@ -11,7 +11,7 @@
     "en": "Phillips Dynalite Envision Gateway"
   },
   "description": {
-    "en": "Controlls lights via the Dynalite Envision Gateway."
+    "en": "Controls lights via the Dynalite Envision Gateway."
   },
   "category": [
     "lights"
@@ -42,7 +42,7 @@
   "drivers": [
     {
       "name": {
-        "en": "Dynalite Gateway"
+        "en": "Dynalite Light"
       },
       "class": "light",
       "capabilities": [
@@ -107,12 +107,23 @@
           "hint": {
             "en": "The time taken to fade the light from one state to another, in seconds."
           }
+        },
+        {
+          "id": "host",
+          "type": "text",
+          "label": {
+            "en": "Host or IP"
+          },
+          "value": "0.0.0.0",
+          "hint": {
+            "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway."
+          }
         }
       ]
     }
   ],
   "discovery": {
-    "x": {
+    "dynalite_gateway": {
       "type": "mac",
       "mac": {
         "manufacturer": [
