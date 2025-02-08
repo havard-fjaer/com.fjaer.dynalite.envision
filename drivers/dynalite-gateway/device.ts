@@ -12,19 +12,51 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
 
   }
 
+  // Handle on/off capability
   async onCapabilityOnoff(value: boolean) {
-    let level = value ? 100 : 0;
-    await this.callGateway(level);    
+    if (value === false) {
+      await this.dimLight(0); // Skru av umiddelbart
+      return;
+    }
+
+    await new Promise(resolve => setTimeout(resolve, 500)); // Vent opptil 500 ms for å se om dimming avslutter
+
+    if (this.dimmingInProgress) {
+      this.log('Dimming is still in progress, skipping turn on');
+      return;
+    }
+
+    await this.dimLight(100);
+    this.log('Turned on after waiting for dimming');
   }
 
-  onCapabilityDim(value: number) {
+  async onCapabilityDim(value: number) {
+    this.startDimmingProcess();
     // Convert 0-1 to 0-100
     let gatewayValue = Math.round(value * 100);
-    this.callGateway(gatewayValue);
+    await this.dimLight(gatewayValue);
   }
 
+  // Variable to track dimming status
+  private dimmingTimer: NodeJS.Timeout | null = null;
+  dimmingInProgress = false;
+  
 
-  async callGateway(level: number) {
+  // Start dimming process with a controlled timeout
+  startDimmingProcess() {
+    this.dimmingInProgress = true;
+
+    if (this.dimmingTimer) {
+      clearTimeout(this.dimmingTimer); // Nullstiller eksisterende timer
+    }
+
+    this.dimmingTimer = setTimeout(() => {
+      this.dimmingInProgress = false;
+      this.dimmingTimer = null;
+    }, 1000); // 1 sekund timeout
+  }
+
+  async dimLight(level: number) {
     const settings = this.getSettings();
     this.checkSettings(settings);
     let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${level}`;
@@ -49,9 +81,8 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     }
     if (errors.length > 0) {
       this.error(errors.join(', '));
-      return false;
+      throw new Error(errors.join(', '));
     }
-    return true;
   }
 
   /**
