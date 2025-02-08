@@ -8,25 +8,50 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
   async onInit() {
     this.log('Dynalite Light device has been initialized');
     this.registerCapabilityListener("onoff", this.onCapabilityOnoff.bind(this));
+    this.registerCapabilityListener("dim", this.onCapabilityDim.bind(this));
 
   }
 
-  async onCapabilityOnoff(value: boolean, opts: any) {
-    const settings = this.getSettings();
+  async onCapabilityOnoff(value: boolean) {
+    let level = value ? 100 : 0;
+    await this.callGateway(level);    
+  }
 
-    let level = -1;
-    if (value) {
-      this.log('Turning on the light');
-      level = 100;
-    } else {
-      this.log('Turning off the light');
-      level = 0;
-    }
-    
+  onCapabilityDim(value: number) {
+    // Convert 0-1 to 0-100
+    let gatewayValue = Math.round(value * 100);
+    this.callGateway(gatewayValue);
+  }
+
+
+  async callGateway(level: number) {
+    const settings = this.getSettings();
+    this.checkSettings(settings);
     let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${level}`;
-    
+
     this.log(`Calling ${url}`);
     await fetch(url).catch(this.error);
+  }
+
+  async checkSettings(settings: any) {
+    let errors = [];
+    if (!settings.host) {
+      errors.push('No host configured');
+    }
+    if (!settings.area) {
+      errors.push('No area configured');
+    }
+    if (!settings.channel) {
+      errors.push('No channel configured');
+    }
+    if (!settings.fade) {
+      errors.push('No fade configured');
+    }
+    if (errors.length > 0) {
+      this.error(errors.join(', '));
+      return false;
+    }
+    return true;
   }
 
   /**
