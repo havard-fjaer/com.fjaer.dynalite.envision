@@ -44,17 +44,13 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
       return;
     }
 
-    let text = await response.text(); // Henter ut innholdet som tekst
+    let text = await response.text(); 
     this.log(`Current dim level: ${text}`);
 
     // Parse response, i.e l=28
-    let match = text.match(/\d+/); // Finn første tall i strengen
-    let level = match ? parseInt(match[0]) : NaN;
+    let match = text.match(/\d+/); // Extract number
+    let level = match ? parseInt(match[0]) : 0; // Convert to number, assume 0 if no match
 
-    if (isNaN(level)) {
-      this.error(`Invalid response format: ${text}`);
-      return;
-    }
 
     // Update device state
     let dimLevel = level / 100;
