@@ -21,8 +21,8 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
       return;
     }
 
-    // Wait and see if we will be dimming some time during the next 500 ms
-    await new Promise(resolve => setTimeout(resolve, 500)); 
+    // Wait and see if we will be dimming some time during the next few ms
+    await new Promise(resolve => setTimeout(resolve, 200)); 
 
     // If dimming is in progress, we skip the turn on
     if (this.dimmingInProgress) {
@@ -60,7 +60,7 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     this.dimmingTimer = setTimeout(() => {
       this.dimmingInProgress = false;
       this.dimmingTimer = null;
-    }, 1000); // This value must be higher than the wait time in onCapabilityOnoff
+    }, 500); // This value must be higher than the wait time in onCapabilityOnoff
   }
 
   // Dim light, level 0-100
