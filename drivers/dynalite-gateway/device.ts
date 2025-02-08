@@ -14,13 +14,17 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
 
   // Handle on/off capability
   async onCapabilityOnoff(value: boolean) {
+    
+    // Turn off light
     if (value === false) {
-      await this.dimLight(0); // Skru av umiddelbart
+      await this.dimLight(0); 
       return;
     }
 
-    await new Promise(resolve => setTimeout(resolve, 500)); // Vent opptil 500 ms for å se om dimming avslutter
+    // Wait and see if we will be dimming some time during the next 500 ms
+    await new Promise(resolve => setTimeout(resolve, 500)); 
 
+    // If dimming is in progress, we skip the turn on
     if (this.dimmingInProgress) {
       this.log('Dimming is still in progress, skipping turn on');
       return;
@@ -30,11 +34,13 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     this.log('Turned on after waiting for dimming');
   }
 
+  // Handle dim capability
   async onCapabilityDim(value: number) {
     this.startDimmingProcess();
+
     // Convert 0-1 to 0-100
-    let gatewayValue = Math.round(value * 100);
-    await this.dimLight(gatewayValue);
+    let dimLevel = Math.round(value * 100);
+    await this.dimLight(dimLevel);
   }
 
   // Variable to track dimming status
@@ -47,24 +53,29 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     this.dimmingInProgress = true;
 
     if (this.dimmingTimer) {
-      clearTimeout(this.dimmingTimer); // Nullstiller eksisterende timer
+      clearTimeout(this.dimmingTimer); // Reset timer
     }
 
+    // Assume any dimming process will be done within 1 second.
     this.dimmingTimer = setTimeout(() => {
       this.dimmingInProgress = false;
       this.dimmingTimer = null;
-    }, 1000); // 1 sekund timeout
+    }, 1000); // This value must be higher than the wait time in onCapabilityOnoff
   }
 
+  // Dim light, level 0-100
   async dimLight(level: number) {
     const settings = this.getSettings();
     this.checkSettings(settings);
+
+    // Construct URL
     let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${level}`;
 
     this.log(`Calling ${url}`);
     await fetch(url).catch(this.error);
   }
 
+  // Check that all settings are present
   async checkSettings(settings: any) {
     let errors = [];
     if (!settings.host) {
