@@ -1,6 +1,6 @@
 import Homey from 'homey';
 
-module.exports = class MyDevice extends Homey.Device {
+module.exports = class DynaliteLightDevice extends Homey.Device {
 
   /**
    * onInit is called when the device is initialized.
@@ -12,10 +12,6 @@ module.exports = class MyDevice extends Homey.Device {
   }
 
   async onCapabilityOnoff(value: boolean, opts: any) {
-    // ... set value to real device, e.g.
-    // await setMyDeviceState({ on: value });
-    // or, throw an error
-    // throw new Error('Switching the device failed!');
     const settings = this.getSettings();
 
     let level = -1;

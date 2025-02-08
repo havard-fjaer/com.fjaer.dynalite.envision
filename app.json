@@ -11,7 +11,8 @@
     "en": "Phillips Dynalite Envision Gateway"
   },
   "description": {
-    "en": "Controls lights via the Dynalite Envision Gateway."
+    "en": "Controls lights via the Dynalite Envision Gateway.",
+    "no": "Kontrollerer lys via Dynalite Envision Gateway."
   },
   "category": [
     "lights"
@@ -79,44 +80,52 @@
           "id": "area",
           "type": "number",
           "label": {
-            "en": "Area"
+            "en": "Area",
+            "no": "Område"
           },
           "value": 0,
           "hint": {
-            "en": "The area the light is located in."
+            "en": "The area the light is located in.",
+            "no": "Området der lyset er plassert."
           }
         },
         {
           "id": "channel",
           "type": "number",
           "label": {
-            "en": "Channel"
+            "en": "Channel",
+            "no": "Kanal"
           },
           "value": 0,
           "hint": {
-            "en": "The channel used to control the light."
+            "en": "The channel used to control the light.",
+            "no": "Kanalen som brukes til å kontrollere lyset."
           }
         },
         {
           "id": "fade",
           "type": "number",
           "label": {
-            "en": "Fade"
+            "en": "Fade (ms)",
+            "no": "Toning (ms)"
           },
           "value": 0.2,
           "hint": {
-            "en": "The time taken to fade the light from one state to another, in seconds."
+            "en": "The time taken to fade the light from one state to another, in milli seconds.",
+            "no": "Tiden det tar å endre lyset fra én tilstand til en annen, i millisekunder."
           }
         },
         {
           "id": "host",
           "type": "text",
           "label": {
-            "en": "Host or IP"
+            "en": "Host or IP",
+            "no": "Vert eller IP"
           },
           "value": "0.0.0.0",
           "hint": {
-            "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway."
+            "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway.",
+            "no": "Verten eller IP-en til Dynalite Envision Gateway. Vil være den samme for alle lysene hvis du bare har én gateway."
           }
         }
       ]
