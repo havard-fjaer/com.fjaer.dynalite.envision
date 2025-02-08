@@ -10,19 +10,69 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     this.registerCapabilityListener("onoff", this.onCapabilityOnoff.bind(this));
     this.registerCapabilityListener("dim", this.onCapabilityDim.bind(this));
 
+    // Start status check with random initial delay
+    let initialDelay = Math.floor(Math.random() * 60);
+    this.log(`Initial status check in ${initialDelay} seconds`);
+
+    setTimeout(() => {
+      this.checkStatusWrapper(); 
+    }, initialDelay * 1000);
+  }
+
+  // Check status wrapper with 60 second interval
+  async checkStatusWrapper() {
+    this.log(`Next check in 60 seconds`);
+
+    setTimeout(async () => {
+      await this.checkStatus();
+      this.checkStatusWrapper();
+    }, 60000); 
+  }
+
+  // Check device status
+  async checkStatus() {
+    const settings = this.getSettings();
+    this.checkSettings(settings);
+
+    // Construct URL
+    let url = `http://${settings.host}/GetDyNet.cgi?a=${settings.area}&c=${settings.channel}&_=${Date.now()}`;
+
+    this.log(`Calling ${url}`);
+    let response = await fetch(url).catch(this.error);
+    if (!response || !response.ok) {
+      this.error(`Failed to fetch from ${url}`);
+      return;
+    }
+
+    let text = await response.text(); // Henter ut innholdet som tekst
+    this.log(`Current dim level: ${text}`);
+
+    // Parse response, i.e l=28
+    let match = text.match(/\d+/); // Finn første tall i strengen
+    let level = match ? parseInt(match[0]) : NaN;
+
+    if (isNaN(level)) {
+      this.error(`Invalid response format: ${text}`);
+      return;
+    }
+
+    // Update device state
+    let dimLevel = level / 100;
+    this.setCapabilityValue("dim", dimLevel);
+    this.setCapabilityValue("onoff", level > 0);
   }
 
   // Handle on/off capability
   async onCapabilityOnoff(value: boolean) {
-    
+
     // Turn off light
     if (value === false) {
-      await this.dimLight(0); 
+      await this.dimLight(0);
       return;
     }
 
     // Wait and see if we will be dimming some time during the next few ms
-    await new Promise(resolve => setTimeout(resolve, 200)); 
+    await new Promise(resolve => setTimeout(resolve, 200));
 
     // If dimming is in progress, we skip the turn on
     if (this.dimmingInProgress) {
@@ -46,7 +96,7 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
   // Variable to track dimming status
   private dimmingTimer: NodeJS.Timeout | null = null;
   dimmingInProgress = false;
-  
+
 
   // Start dimming process with a controlled timeout
   startDimmingProcess() {
