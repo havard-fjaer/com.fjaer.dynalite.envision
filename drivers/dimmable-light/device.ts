@@ -3,6 +3,18 @@ import DynaliteDevice from '../DynaliteDevice';
 
 export default class DynaliteDimmableLight extends DynaliteDevice {
 
+  // Light status be polled every 60 seconds, with a random initial delay, to avoid overloading the gateway.
+  waitBeforeCheckLightStatus = 120; // Seconds
+
+  // Homey Moods will turn on the light first, and then start dimming. 
+  // We do not want to turn on the light if dimming is in progress, as turning on is the same as setting dim to 100%.
+  // These variables control the timing, asking the onoff capability to wait and see 
+  // if dimming is in progress, and then turn on the light if no dimming is in progress.
+  waitBeforeTurnOnLight = 200;  // ms 
+  
+  // This value must be higher than waitBeforeTurnOnLight
+  assumedDelayBetweenTurnOnAndDimming = 500; // ms
+
   async onInit() {
     super.onInit()
     this.registerCapabilityListener("dim", this.onCapabilityDim.bind(this));
@@ -29,7 +41,7 @@ export default class DynaliteDimmableLight extends DynaliteDevice {
     }, this.assumedDelayBetweenTurnOnAndDimming);
   }
 
-  protected async prepareLightLevel(): Promise<number | null> {
+  protected async awaitDimming(): Promise<number | null> {
     // Vent noen millisekunder for å se om en dimmekommando kommer inn
     await new Promise(resolve => setTimeout(resolve, this.waitBeforeTurnOnLight));
 
@@ -42,6 +54,11 @@ export default class DynaliteDimmableLight extends DynaliteDevice {
     // Hvis ingen dimmekommando kom, sett nivået til nåværende dim-verdi (eller 1 som fallback)
     return this.getCapabilityValue("dim") || 1;
   }
+
+  protected updateCapability(level: number): void {
+    this.setCapabilityValue("dim", level);
+  }
+
 
 }
 

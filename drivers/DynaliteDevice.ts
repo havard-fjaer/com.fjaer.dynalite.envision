@@ -1,71 +1,17 @@
 import Homey from 'homey';
+import { StatusChecker } from './StatusChecker';
 
 export default class DynaliteDevice extends Homey.Device {
-  // Light status be polled every 60 seconds, with a random initial delay, to avoid overloading the gateway.
-  waitBeforeCheckLightStatus = 120; // Seconds
 
-  // Homey Moods will turn on the light first, and then start dimming. 
-  // We do not want to turn on the light if dimming is in progress, as turning on is the same as setting dim to 100%.
-  // These variables control the timing, asking the onoff capability to wait and see 
-  // if dimming is in progress, and then turn on the light if no dimming is in progress.
-  waitBeforeTurnOnLight = 200;  // ms 
-  // This value must be higher than waitBeforeTurnOnLight
-  assumedDelayBetweenTurnOnAndDimming = 500; // ms
-
-
+  statusChecker = new StatusChecker(this);
 
   async onInit() {
     this.log(`${this.constructor.name} has been initialized`);
     this.registerCapabilityListener("onoff", this.onCapabilityOnoff.bind(this));
-
-
-
-    this.initStatusChecker();
+    this.statusChecker.start();
   }
 
-  async initStatusChecker() {
-    // Check if status checker is enabled
-    if (this.getSettings().statusCheckerEnabled) {
-      // Start status check with random initial delay, to avoid overloading the gateway
-      let initialDelay = Math.floor(Math.random() * this.waitBeforeCheckLightStatus);
-      this.log(`Initial status check in ${initialDelay} seconds`);
-      setTimeout(() => this.checkStatusTimer(), initialDelay * 1000);
-    }
-  }
 
-  // Check status with 60 second interval
-  async checkStatusTimer() {
-    await this.checkStatus();
-    setTimeout(() => this.checkStatusTimer(), this.waitBeforeCheckLightStatus * 1000);
-  }
-
-  // Check device status
-  async checkStatus() {
-    const settings = this.getSettings();
-    this.checkSettings(settings);
-
-    let url = `http://${settings.host}/GetDyNet.cgi?a=${settings.area}&c=${settings.channel}&_=${Date.now()}`;
-    this.log(`Calling ${url}`);
-
-    try {
-      let response = await fetch(url);
-      if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-
-      let text = await response.text();
-      // Parse response, i.e l=28
-      let match = text.match(/\d+/);
-      let level = match ? parseInt(match[0]) : 0;
-
-      this.setCapabilityValue("onoff", level > 0);
-      if (this.hasCapability("dim")) {
-        this.setCapabilityValue("dim", level / 100);
-      }
-
-    } catch (error) {
-      this.error(`Failed to fetch from ${url}: ${error}`);
-      this.setUnavailable().catch(this.error);
-    }
-  }
 
   async onCapabilityOnoff(value: boolean) {
     if (value === false) {
@@ -73,7 +19,7 @@ export default class DynaliteDevice extends Homey.Device {
       return;
     }
     // If there is a dimming process in progress, skip turning on the light
-    let level = await this.prepareLightLevel();
+    let level = await this.awaitDimming();
     if (level === null) {
       this.log("Skipping turn on due to dimming state.");
       return;
@@ -83,7 +29,7 @@ export default class DynaliteDevice extends Homey.Device {
   }
 
   // Override to evaluate if light should be turned on or not. Set level to 1 to turn on the light, otherwise set to null.
-  protected async prepareLightLevel(): Promise<number | null> {
+  protected async awaitDimming(): Promise<number | null> {
     return 1;
   }
 
@@ -99,10 +45,12 @@ export default class DynaliteDevice extends Homey.Device {
     await fetch(url).catch(this.error);
 
     this.setCapabilityValue("onoff", level > 0);
-    if (this.hasCapability("dim")) {
-      this.setCapabilityValue("dim", level);
-    }
+    this.updateCapability(level);
   }
+
+  protected updateCapability(level: number): void {
+  }
+
 
   async checkSettings(settings: any) {
     let errors = [];
