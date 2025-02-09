@@ -105,6 +105,7 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
       dimLevel = 1;
     }
     await this.dimLight(dimLevel * 100);
+    this.setCapabilityValue("dim", dimLevel);
     this.log('Turned on after waiting for dimming');
   }
 
