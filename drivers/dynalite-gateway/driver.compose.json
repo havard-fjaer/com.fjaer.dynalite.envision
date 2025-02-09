@@ -2,6 +2,7 @@
   "name": {
     "en": "Dynalite Light"
   },
+  "deprecated": true,
   "class": "light",
   "capabilities": [
     "dim",
