@@ -104,8 +104,7 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
       // Turn on light to 100% 
       dimLevel = 1;
     }
-    await this.dimLight(dimLevel * 100);
-    this.setCapabilityValue("dim", dimLevel);
+    await this.dimLight(dimLevel);
     this.log('Turned on after waiting for dimming');
   }
 
@@ -115,11 +114,8 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     // Inform on/off capability that we are starting a dimming process
     this.startDimmingProcess();
 
-    // Convert 0-1 to 0-100
-    let dimLevel = Math.round(value * 100);
-
     // Dim light
-    await this.dimLight(dimLevel);
+    await this.dimLight(value);
   }
 
   // Variable to track dimming status
@@ -142,17 +138,18 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     }, this.assumedDelayBetweenTurnOnAndDimming);
   }
 
-  // Dim light, level 0-100
+  // Dim light, level 0-1
   async dimLight(level: number) {
     const settings = this.getSettings();
     this.checkSettings(settings);
-
+    let dynaliteDimLevel = Math.round(level * 100);
     // Construct URL
-    let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${level}&_=${Date.now()}`;
+    let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${dynaliteDimLevel}&_=${Date.now()}`;
 
     this.log(`Calling ${url}`);
     await fetch(url).catch(this.error);
     this.setCapabilityValue("onoff", level > 0);
+    this.setCapabilityValue("dim", level);
   }
 
   // Check that all settings are present
