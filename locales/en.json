@@ -1,1 +1,7 @@
-{}
+{
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Global settings for the gateway."
+    }
+  }
+  

@@ -24,9 +24,11 @@ export class StatusChecker {
   
     private async checkStatus() {
       const settings = this.device.getSettings();
-      this.device.checkSettings(settings);
+      let host = this.device.homey.settings.get('host');
+      if (!await this.device.settingsOk(settings, host)) { return }
   
-      let url = `http://${settings.host}/GetDyNet.cgi?a=${settings.area}&c=${settings.channel}&_=${Date.now()}`;
+  
+      let url = `http://${host}/GetDyNet.cgi?a=${settings.area}&c=${settings.channel}&_=${Date.now()}`;
       this.device.log(`Calling ${url}`);
   
       try {

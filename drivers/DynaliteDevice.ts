@@ -36,10 +36,11 @@ export default class DynaliteDevice extends Homey.Device {
 
   async setLightLevel(level: number) {
     const settings = this.getSettings();
-    if (!await this.settingsOk(settings)) { return }
+    let host = this.homey.settings.get('host');
+    if (!await this.settingsOk(settings, host)) { return }
 
     let dynaliteDimLevel = Math.round(level * 100);
-    let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${dynaliteDimLevel}&_=${Date.now()}`;
+    let url = `http://${host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${dynaliteDimLevel}&_=${Date.now()}`;
     this.log(`Calling ${url}`);
 
     await fetch(url).catch(this.error);
@@ -47,12 +48,12 @@ export default class DynaliteDevice extends Homey.Device {
     this.setCapabilityValue("onoff", level > 0);
   }
 
-  async settingsOk(settings: any) {
+  async settingsOk(settings: any, host: string) {
     let errors = [];
-    if (!settings.host) errors.push('No host configured');
-    if (!settings.area) errors.push('No area configured');
-    if (!settings.channel) errors.push('No channel configured');
-    if (!settings.fade) errors.push('No fade configured');
+    if (!host || host.length <= 1) errors.push('No host configured globally in app settings.');
+    if (!settings.area) errors.push('No area configured for device.');
+    if (!settings.channel) errors.push('No channel configured for device.');
+    if (!settings.fade) errors.push('No fade configured for device.');
 
     if (errors.length > 0) {
       this.error('Please configure the Dynalite device in the Homey app. ' + errors.join(', '));

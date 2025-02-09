@@ -117,18 +117,6 @@
             "en": "Enable status checking for the light. Disable if the gateway is overloaded.",
             "no": "Aktiver statuskontroll for lyset. Deaktiver hvis gatewayen er overbelastet."
           }
-        },
-        {
-          "id": "host",
-          "type": "text",
-          "label": {
-            "en": "Host or IP",
-            "no": "Vert eller IP"
-          },
-          "hint": {
-            "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway.",
-            "no": "Verten eller IP-en til Dynalite Envision Gateway. Vil være den samme for alle lysene hvis du bare har én gateway."
-          }
         }
       ]
     },
@@ -325,18 +313,6 @@
             "en": "Enable status checking for the light. Disable if the gateway is overloaded.",
             "no": "Aktiver statuskontroll for lyset. Deaktiver hvis gatewayen er overbelastet."
           }
-        },
-        {
-          "id": "host",
-          "type": "text",
-          "label": {
-            "en": "Host or IP",
-            "no": "Vert eller IP"
-          },
-          "hint": {
-            "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway.",
-            "no": "Verten eller IP-en til Dynalite Envision Gateway. Vil være den samme for alle lysene hvis du bare har én gateway."
-          }
         }
       ]
     },
@@ -427,18 +403,6 @@
           "hint": {
             "en": "Enable status checking for the light. Disable if the gateway is overloaded.",
             "no": "Aktiver statuskontroll for lyset. Deaktiver hvis gatewayen er overbelastet."
-          }
-        },
-        {
-          "id": "host",
-          "type": "text",
-          "label": {
-            "en": "Host or IP",
-            "no": "Vert eller IP"
-          },
-          "hint": {
-            "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway.",
-            "no": "Verten eller IP-en til Dynalite Envision Gateway. Vil være den samme for alle lysene hvis du bare har én gateway."
           }
         }
       ]
