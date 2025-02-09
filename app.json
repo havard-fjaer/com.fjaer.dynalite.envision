@@ -202,7 +202,7 @@
     },
     {
       "name": {
-        "en": "Relay"
+        "en": "Socket"
       },
       "class": "socket",
       "capabilities": [
