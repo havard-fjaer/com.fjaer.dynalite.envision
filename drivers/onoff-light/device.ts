@@ -1,5 +1,6 @@
 import DynaliteDevice from '../DynaliteDevice';
 
-export default class DynaliteOnOffLight extends DynaliteDevice {
+export class DynaliteOnOffLight extends DynaliteDevice {
 
 }
+module.exports = DynaliteOnOffLight;

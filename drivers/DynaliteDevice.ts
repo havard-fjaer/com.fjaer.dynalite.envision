@@ -45,11 +45,11 @@ export default class DynaliteDevice extends Homey.Device {
     await fetch(url).catch(this.error);
 
     this.setCapabilityValue("onoff", level > 0);
-    this.updateCapability(level);
+    // this.updateCapability(level);
   }
 
-  protected updateCapability(level: number): void {
-  }
+  // protected updateCapability(level: number): void {
+  // }
 
 
   async checkSettings(settings: any) {

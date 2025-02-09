@@ -3,7 +3,9 @@
     "en": "On/Off Light"
   },
   "class": "light",
-  "capabilities": [],
+  "capabilities": [
+    "onoff"
+  ],
   "platforms": [
     "local"
   ],

@@ -55,9 +55,9 @@ export default class DynaliteDimmableLight extends DynaliteDevice {
     return this.getCapabilityValue("dim") || 1;
   }
 
-  protected updateCapability(level: number): void {
-    this.setCapabilityValue("dim", level);
-  }
+  // protected updateCapability(level: number): void {
+  //   this.setCapabilityValue("dim", level);
+  // }
 
 
 }
