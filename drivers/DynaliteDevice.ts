@@ -1,13 +1,17 @@
 import Homey from 'homey';
 import { StatusChecker } from './StatusChecker';
+import { SettingsWrapper } from './SettingsWrapper';
 
 export default class DynaliteDevice extends Homey.Device {
 
   statusChecker = new StatusChecker(this);
 
+  settingsWrapper = new SettingsWrapper(this);
+
   async onInit() {
     this.log(`${this.constructor.name} has been initialized`);
     this.registerCapabilityListener("onoff", this.onCapabilityOnoff.bind(this));
+    this.settingsWrapper.init();
     this.statusChecker.start();
   }
 
@@ -35,12 +39,10 @@ export default class DynaliteDevice extends Homey.Device {
 
 
   async setLightLevel(level: number) {
-    const settings = this.getSettings();
-    let host = this.homey.settings.get('host');
-    if (!await this.settingsOk(settings, host)) { return }
-
+    if(!this.settingsWrapper.settingsOk()) { return }
+    let settings = this.settingsWrapper.getSettings();
     let dynaliteDimLevel = Math.round(level * 100);
-    let url = `http://${host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${dynaliteDimLevel}&_=${Date.now()}`;
+    let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${dynaliteDimLevel}&_=${Date.now()}`;
     this.log(`Calling ${url}`);
 
     await fetch(url).catch(this.error);
@@ -48,19 +50,6 @@ export default class DynaliteDevice extends Homey.Device {
     this.setCapabilityValue("onoff", level > 0);
   }
 
-  async settingsOk(settings: any, host: string) {
-    let errors = [];
-    if (!host || host.length <= 1) errors.push('No host configured globally in app settings.');
-    if (!settings.area) errors.push('No area configured for device.');
-    if (!settings.channel) errors.push('No channel configured for device.');
-    if (!settings.fade) errors.push('No fade configured for device.');
-
-    if (errors.length > 0) {
-      this.error('Please configure the Dynalite device in the Homey app. ' + errors.join(', '));
-      return false
-    }
-    return true;
-  }
 
   async onAdded() {
     this.log('Dynalite Device added');
