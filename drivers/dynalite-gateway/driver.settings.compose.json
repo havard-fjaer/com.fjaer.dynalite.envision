@@ -42,6 +42,20 @@
     }
   },
   {
+    "id": "statusCheckerEnabled",
+    "type": "checkbox",
+    "label": {
+      "en": "Check status",
+      "no": "Sjekk status"
+    },
+    "value": false,
+    "hint": {
+      "en": "Enable status checking for the light. Disable if the gateway is overloaded.",
+      "no": "Aktiver statuskontroll for lyset. Deaktiver hvis gatewayen er overbelastet."
+    }
+  },
+  
+  {
     "id": "host",
     "type": "text",
     "label": {

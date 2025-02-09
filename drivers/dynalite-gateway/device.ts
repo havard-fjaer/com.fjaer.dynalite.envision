@@ -4,7 +4,7 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
 
   // Light status be polled every 60 seconds, with a random initial delay, to avoid overloading the gateway.
   waitBeforeCheckLightStatus = 120; // Seconds
-  
+
   // Homey Moods will turn on the light first, and then start dimming. 
   // We do not want to turn on the light if dimming is in progress, as turning on is the same as setting dim to 100%.
   // These variables control the timing, asking the onoff capability to wait and see 
@@ -20,13 +20,20 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     this.log('Dynalite Light device has been initialized');
     this.registerCapabilityListener("onoff", this.onCapabilityOnoff.bind(this));
     this.registerCapabilityListener("dim", this.onCapabilityDim.bind(this));
+    this.initStatusChecker();
+  }
 
-    // Start status check with random initial delay, to avoid overloading the gateway
-    let initialDelay = Math.floor(Math.random() * this.waitBeforeCheckLightStatus);
-    this.log(`Initial status check in ${initialDelay} seconds`);
-    setTimeout(() => {
-      this.checkStatusTimer(); 
-    }, initialDelay * 1000);
+  // Check if status checker is enabled
+  async initStatusChecker() {
+    // Start status checker
+    if (this.getSettings().statusCheckerEnabled) {
+      // Start status check with random initial delay, to avoid overloading the gateway
+      let initialDelay = Math.floor(Math.random() * this.waitBeforeCheckLightStatus);
+      this.log(`Initial status check in ${initialDelay} seconds`);
+      setTimeout(() => {
+        this.checkStatusTimer();
+      }, initialDelay * 1000);
+    }
   }
 
   // Check status wrapper with 60 second interval
@@ -34,7 +41,7 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     await this.checkStatus();
     setTimeout(async () => {
       this.checkStatusTimer();
-    }, this.waitBeforeCheckLightStatus * 1000); 
+    }, this.waitBeforeCheckLightStatus * 1000);
   }
 
   // Check device status
@@ -49,10 +56,16 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     let response = await fetch(url).catch(this.error);
     if (!response || !response.ok) {
       this.error(`Failed to fetch from ${url}`);
+      if (this.getAvailable()) {
+        this.setUnavailable().catch(this.error);
+      }
       return;
     }
+    if (!this.getAvailable()) {
+      this.setAvailable().catch(this.error);
+    }
 
-    let text = await response.text(); 
+    let text = await response.text();
     this.log(`Current dim level: ${text}`);
 
     // Parse response, i.e l=28
@@ -78,20 +91,26 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
 
     // Wait and see if we will be dimming some time during the next few ms
     await new Promise(resolve => setTimeout(resolve, this.waitBeforeTurnOnLight));
+
     // If dimming is in progress, we skip the turn on
     if (this.dimmingInProgress) {
       this.log('Dimming is still in progress, skipping turn on');
       return;
     }
 
-    // Turn on light to 100% 
-    await this.dimLight(100);
+    // Get current dim level
+    let dimLevel = this.getCapabilityValue("dim");
+    if (dimLevel === null || dimLevel === 0) {
+      // Turn on light to 100% 
+      dimLevel = 1;
+    }
+    await this.dimLight(dimLevel * 100);
     this.log('Turned on after waiting for dimming');
   }
 
   // Handle dim capability
   async onCapabilityDim(value: number) {
-    
+
     // Inform on/off capability that we are starting a dimming process
     this.startDimmingProcess();
 
@@ -119,7 +138,7 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     this.dimmingTimer = setTimeout(() => {
       this.dimmingInProgress = false;
       this.dimmingTimer = null;
-    }, this.assumedDelayBetweenTurnOnAndDimming); 
+    }, this.assumedDelayBetweenTurnOnAndDimming);
   }
 
   // Dim light, level 0-100
@@ -132,6 +151,7 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
 
     this.log(`Calling ${url}`);
     await fetch(url).catch(this.error);
+    this.setCapabilityValue("onoff", level > 0);
   }
 
   // Check that all settings are present
