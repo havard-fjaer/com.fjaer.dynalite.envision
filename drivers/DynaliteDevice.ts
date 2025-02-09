@@ -13,7 +13,6 @@ export default class DynaliteDevice extends Homey.Device {
   assumedDelayBetweenTurnOnAndDimming = 500; // ms
 
 
-  protected dimmingInProgress = false;
 
   async onInit() {
     this.log(`${this.constructor.name} has been initialized`);
@@ -25,8 +24,8 @@ export default class DynaliteDevice extends Homey.Device {
   }
 
   async initStatusChecker() {
-  // Check if status checker is enabled
-  if (this.getSettings().statusCheckerEnabled) {
+    // Check if status checker is enabled
+    if (this.getSettings().statusCheckerEnabled) {
       // Start status check with random initial delay, to avoid overloading the gateway
       let initialDelay = Math.floor(Math.random() * this.waitBeforeCheckLightStatus);
       this.log(`Initial status check in ${initialDelay} seconds`);
@@ -34,14 +33,14 @@ export default class DynaliteDevice extends Homey.Device {
     }
   }
 
-    // Check status with 60 second interval
-async checkStatusTimer() {
+  // Check status with 60 second interval
+  async checkStatusTimer() {
     await this.checkStatus();
     setTimeout(() => this.checkStatusTimer(), this.waitBeforeCheckLightStatus * 1000);
   }
 
-    // Check device status
-async checkStatus() {
+  // Check device status
+  async checkStatus() {
     const settings = this.getSettings();
     this.checkSettings(settings);
 
@@ -53,8 +52,8 @@ async checkStatus() {
       if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
 
       let text = await response.text();
-    // Parse response, i.e l=28
-    let match = text.match(/\d+/);
+      // Parse response, i.e l=28
+      let match = text.match(/\d+/);
       let level = match ? parseInt(match[0]) : 0;
 
       this.setCapabilityValue("onoff", level > 0);
@@ -73,24 +72,21 @@ async checkStatus() {
       await this.setLightLevel(0);
       return;
     }
-
-    let level = 0;
-    // Has dim capability, so we can dim the light
-    if (this.hasCapability("dim")) {
-    // Wait and see if we will be dimming some time during the next few ms
-    await new Promise(resolve => setTimeout(resolve, this.waitBeforeTurnOnLight));
-    // If dimming is in progress, we skip the turn on
-    if (this.dimmingInProgress) {
-        this.log('Dimming is still in progress, skipping turn on');
-        return;
-      }
-      level = this.getCapabilityValue("dim") || 1;
-    } else {
-      level = 1;
+    // If there is a dimming process in progress, skip turning on the light
+    let level = await this.prepareLightLevel();
+    if (level === null) {
+      this.log("Skipping turn on due to dimming state.");
+      return;
     }
 
     await this.setLightLevel(level);
   }
+
+  // Override to evaluate if light should be turned on or not. Set level to 1 to turn on the light, otherwise set to null.
+  protected async prepareLightLevel(): Promise<number | null> {
+    return 1;
+  }
+
 
   async setLightLevel(level: number) {
     const settings = this.getSettings();
@@ -101,6 +97,7 @@ async checkStatus() {
     this.log(`Calling ${url}`);
 
     await fetch(url).catch(this.error);
+
     this.setCapabilityValue("onoff", level > 0);
     if (this.hasCapability("dim")) {
       this.setCapabilityValue("dim", level);
