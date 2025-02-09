@@ -2,6 +2,17 @@ import Homey from 'homey';
 
 module.exports = class DynaliteLightDevice extends Homey.Device {
 
+  // Light status be polled every 60 seconds, with a random initial delay, to avoid overloading the gateway.
+  waitBeforeCheckLightStatus = 60; // Seconds
+  
+  // Homey Moods will turn on the light first, and then start dimming. 
+  // We do not want to turn on the light if dimming is in progress, as turning on is the same as setting dim to 100%.
+  // These variables control the timing, asking the onoff capability to wait and see 
+  // if dimming is in progress, and then turn on the light if no dimming is in progress.
+  waitBeforeTurnOnLight = 200;  // ms 
+  // This value must be higher than waitBeforeTurnOnLight
+  assumedDelayBetweenTurnOnAndDimming = 500; // ms
+
   /**
    * onInit is called when the device is initialized.
    */
@@ -10,23 +21,21 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     this.registerCapabilityListener("onoff", this.onCapabilityOnoff.bind(this));
     this.registerCapabilityListener("dim", this.onCapabilityDim.bind(this));
 
-    // Start status check with random initial delay
-    let initialDelay = Math.floor(Math.random() * 60);
+    // Start status check with random initial delay, to avoid overloading the gateway
+    let initialDelay = Math.floor(Math.random() * this.waitBeforeCheckLightStatus);
     this.log(`Initial status check in ${initialDelay} seconds`);
-
     setTimeout(() => {
-      this.checkStatusWrapper(); 
+      this.checkStatusTimer(); 
     }, initialDelay * 1000);
   }
 
   // Check status wrapper with 60 second interval
-  async checkStatusWrapper() {
+  async checkStatusTimer() {
+    await this.checkStatus();
     this.log(`Next check in 60 seconds`);
-
     setTimeout(async () => {
-      await this.checkStatus();
-      this.checkStatusWrapper();
-    }, 60000); 
+      this.checkStatusTimer();
+    }, this.waitBeforeCheckLightStatus * 1000); 
   }
 
   // Check device status
@@ -58,34 +67,39 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     this.setCapabilityValue("onoff", level > 0);
   }
 
+
   // Handle on/off capability
   async onCapabilityOnoff(value: boolean) {
 
-    // Turn off light
+    // Turn off light when value is false
     if (value === false) {
       await this.dimLight(0);
       return;
     }
 
     // Wait and see if we will be dimming some time during the next few ms
-    await new Promise(resolve => setTimeout(resolve, 200));
-
+    await new Promise(resolve => setTimeout(resolve, this.waitBeforeTurnOnLight));
     // If dimming is in progress, we skip the turn on
     if (this.dimmingInProgress) {
       this.log('Dimming is still in progress, skipping turn on');
       return;
     }
 
+    // Turn on light to 100% 
     await this.dimLight(100);
     this.log('Turned on after waiting for dimming');
   }
 
   // Handle dim capability
   async onCapabilityDim(value: number) {
+    
+    // Inform on/off capability that we are starting a dimming process
     this.startDimmingProcess();
 
     // Convert 0-1 to 0-100
     let dimLevel = Math.round(value * 100);
+
+    // Dim light
     await this.dimLight(dimLevel);
   }
 
@@ -102,11 +116,11 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
       clearTimeout(this.dimmingTimer); // Reset timer
     }
 
-    // Assume any dimming process will be done within 1 second.
+    // Assume that there will be a delay between turning on the light and starting dimming
     this.dimmingTimer = setTimeout(() => {
       this.dimmingInProgress = false;
       this.dimmingTimer = null;
-    }, 500); // This value must be higher than the wait time in onCapabilityOnoff
+    }, this.assumedDelayBetweenTurnOnAndDimming); 
   }
 
   // Dim light, level 0-100
