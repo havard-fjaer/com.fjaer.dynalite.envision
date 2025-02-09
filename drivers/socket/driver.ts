@@ -1,12 +1,13 @@
+import { randomUUID } from 'crypto';
 import Homey from 'homey';
 
-module.exports = class MyDriver extends Homey.Driver {
+module.exports = class SocketDriver extends Homey.Driver {
 
   /**
    * onInit is called when the driver is initialized.
    */
   async onInit() {
-    this.log('MyDriver has been initialized');
+    this.log('Socket Driver has been initialized');
   }
 
   /**
@@ -15,16 +16,12 @@ module.exports = class MyDriver extends Homey.Driver {
    */
   async onPairListDevices() {
     return [
-      // Example device data, note that `store` is optional
-      // {
-      //   name: 'My Device',
-      //   data: {
-      //     id: 'my-device',
-      //   },
-      //   store: {
-      //     address: '127.0.0.1',
-      //   },
-      // },
+      {
+        name: 'Dynalite Socket',
+        data: {
+          id: 'dynalite-socket-' + randomUUID(),
+        }
+      },
     ];
   }
 

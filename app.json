@@ -48,6 +48,19 @@
         "large": "/drivers/dimmable-light/assets/images/large.png",
         "xlarge": "/drivers/dimmable-light/assets/images/xlarge.png"
       },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
       "id": "dimmable-light"
     },
     {
@@ -172,6 +185,19 @@
         "large": "/drivers/onoff-light/assets/images/large.png",
         "xlarge": "/drivers/onoff-light/assets/images/xlarge.png"
       },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
       "id": "onoff-light"
     },
     {
@@ -193,6 +219,19 @@
         "large": "/drivers/socket/assets/images/large.png",
         "xlarge": "/drivers/socket/assets/images/xlarge.png"
       },
+      "pair": [
+        {
+          "id": "list_devices",
+          "template": "list_devices",
+          "navigation": {
+            "next": "add_devices"
+          }
+        },
+        {
+          "id": "add_devices",
+          "template": "add_devices"
+        }
+      ],
       "id": "socket"
     }
   ],

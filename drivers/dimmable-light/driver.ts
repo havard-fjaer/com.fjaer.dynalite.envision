@@ -1,3 +1,4 @@
+import { randomUUID } from 'crypto';
 import Homey from 'homey';
 
 module.exports = class DimmableLightDriver extends Homey.Driver {
@@ -15,16 +16,12 @@ module.exports = class DimmableLightDriver extends Homey.Driver {
    */
   async onPairListDevices() {
     return [
-      // Example device data, note that `store` is optional
-      // {
-      //   name: 'My Device',
-      //   data: {
-      //     id: 'my-device',
-      //   },
-      //   store: {
-      //     address: '127.0.0.1',
-      //   },
-      // },
+      {
+        name: 'Dynalite Dimmable Light',
+        data: {
+          id: 'dynalite-dimmable-light-' + randomUUID(),
+        }
+      },
     ];
   }
 
