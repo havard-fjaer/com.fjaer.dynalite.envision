@@ -3,7 +3,7 @@ import Homey from 'homey';
 module.exports = class DynaliteLightDevice extends Homey.Device {
 
   // Light status be polled every 60 seconds, with a random initial delay, to avoid overloading the gateway.
-  waitBeforeCheckLightStatus = 60; // Seconds
+  waitBeforeCheckLightStatus = 120; // Seconds
   
   // Homey Moods will turn on the light first, and then start dimming. 
   // We do not want to turn on the light if dimming is in progress, as turning on is the same as setting dim to 100%.
@@ -32,7 +32,6 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
   // Check status wrapper with 60 second interval
   async checkStatusTimer() {
     await this.checkStatus();
-    this.log(`Next check in 60 seconds`);
     setTimeout(async () => {
       this.checkStatusTimer();
     }, this.waitBeforeCheckLightStatus * 1000); 
@@ -129,7 +128,7 @@ module.exports = class DynaliteLightDevice extends Homey.Device {
     this.checkSettings(settings);
 
     // Construct URL
-    let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${level}`;
+    let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${level}&_=${Date.now()}`;
 
     this.log(`Calling ${url}`);
     await fetch(url).catch(this.error);

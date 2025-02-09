@@ -2,6 +2,7 @@
   {
     "id": "area",
     "type": "number",
+    "highlight": true,
     "label": {
       "en": "Area",
       "no": "Område"
@@ -15,6 +16,7 @@
   {
     "id": "channel",
     "type": "number",
+    "highlight": true,
     "label": {
       "en": "Channel",
       "no": "Kanal"
@@ -28,6 +30,7 @@
   {
     "id": "fade",
     "type": "number",
+    "highlight": true,
     "label": {
       "en": "Fade (ms)",
       "no": "Toning (ms)"
