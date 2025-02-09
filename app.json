@@ -125,7 +125,6 @@
             "en": "Host or IP",
             "no": "Vert eller IP"
           },
-          "value": "0.0.0.0",
           "hint": {
             "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway.",
             "no": "Verten eller IP-en til Dynalite Envision Gateway. Vil være den samme for alle lysene hvis du bare har én gateway."
@@ -231,7 +230,6 @@
             "en": "Host or IP",
             "no": "Vert eller IP"
           },
-          "value": "0.0.0.0",
           "hint": {
             "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway.",
             "no": "Verten eller IP-en til Dynalite Envision Gateway. Vil være den samme for alle lysene hvis du bare har én gateway."
@@ -335,7 +333,6 @@
             "en": "Host or IP",
             "no": "Vert eller IP"
           },
-          "value": "0.0.0.0",
           "hint": {
             "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway.",
             "no": "Verten eller IP-en til Dynalite Envision Gateway. Vil være den samme for alle lysene hvis du bare har én gateway."
@@ -439,7 +436,6 @@
             "en": "Host or IP",
             "no": "Vert eller IP"
           },
-          "value": "0.0.0.0",
           "hint": {
             "en": "The host or IP of the Dynalite Envision Gateway. Will be the same for all lights if you only have one gateway.",
             "no": "Verten eller IP-en til Dynalite Envision Gateway. Vil være den samme for alle lysene hvis du bare har én gateway."

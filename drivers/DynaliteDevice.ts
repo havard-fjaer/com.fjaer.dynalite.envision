@@ -36,23 +36,18 @@ export default class DynaliteDevice extends Homey.Device {
 
   async setLightLevel(level: number) {
     const settings = this.getSettings();
-    this.checkSettings(settings);
-    let dynaliteDimLevel = Math.round(level * 100);
+    if (!await this.settingsOk(settings)) { return }
 
+    let dynaliteDimLevel = Math.round(level * 100);
     let url = `http://${settings.host}/SetDyNet.cgi?a=${settings.area}&c=${settings.channel}&f=${settings.fade}&l=${dynaliteDimLevel}&_=${Date.now()}`;
     this.log(`Calling ${url}`);
 
     await fetch(url).catch(this.error);
 
     this.setCapabilityValue("onoff", level > 0);
-    // this.updateCapability(level);
   }
 
-  // protected updateCapability(level: number): void {
-  // }
-
-
-  async checkSettings(settings: any) {
+  async settingsOk(settings: any) {
     let errors = [];
     if (!settings.host) errors.push('No host configured');
     if (!settings.area) errors.push('No area configured');
@@ -60,9 +55,10 @@ export default class DynaliteDevice extends Homey.Device {
     if (!settings.fade) errors.push('No fade configured');
 
     if (errors.length > 0) {
-      this.error(errors.join(', '));
-      throw new Error(errors.join(', '));
+      this.error('Please configure the Dynalite device in the Homey app. ' + errors.join(', '));
+      return false
     }
+    return true;
   }
 
   async onAdded() {
