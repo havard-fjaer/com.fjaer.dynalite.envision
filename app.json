@@ -30,6 +30,28 @@
   "drivers": [
     {
       "name": {
+        "en": "Dimmable Light"
+      },
+      "class": "light",
+      "capabilities": [
+        "dim",
+        "onoff"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/dimmable-light/assets/images/small.png",
+        "large": "/drivers/dimmable-light/assets/images/large.png",
+        "xlarge": "/drivers/dimmable-light/assets/images/xlarge.png"
+      },
+      "id": "dimmable-light"
+    },
+    {
+      "name": {
         "en": "Dynalite Light"
       },
       "class": "light",
@@ -132,6 +154,46 @@
           }
         }
       ]
+    },
+    {
+      "name": {
+        "en": "On/Off Light"
+      },
+      "class": "light",
+      "capabilities": [],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/onoff-light/assets/images/small.png",
+        "large": "/drivers/onoff-light/assets/images/large.png",
+        "xlarge": "/drivers/onoff-light/assets/images/xlarge.png"
+      },
+      "id": "onoff-light"
+    },
+    {
+      "name": {
+        "en": "Relay"
+      },
+      "class": "socket",
+      "capabilities": [
+        "onoff"
+      ],
+      "platforms": [
+        "local"
+      ],
+      "connectivity": [
+        "lan"
+      ],
+      "images": {
+        "small": "/drivers/socket/assets/images/small.png",
+        "large": "/drivers/socket/assets/images/large.png",
+        "xlarge": "/drivers/socket/assets/images/xlarge.png"
+      },
+      "id": "socket"
     }
   ],
   "discovery": {
