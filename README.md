@@ -1,3 +1,3 @@
-# Phillips Dynalite Envision Gateway
+# Homey App - Phillips Dynalite Envision Gateway
 
-Controlls lights via the Dynalite Envision Gateway.
+Homey controls lights via the Dynalite Envision Gateway.
