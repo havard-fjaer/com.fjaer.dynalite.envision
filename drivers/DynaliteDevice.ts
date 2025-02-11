@@ -55,7 +55,16 @@ export default class DynaliteDevice extends Homey.Device {
     this.log('Dynalite Device added');
   }
 
-  async onSettings({ changedKeys }: { changedKeys: string[] }) {
+  async onSettings({
+    oldSettings,
+    newSettings,
+    changedKeys,
+  }: {
+    oldSettings: { [key: string]: boolean | string | number | undefined | null };
+    newSettings: { [key: string]: boolean | string | number | undefined | null };
+    changedKeys: string[];
+  }): Promise<string | void> {
+    this.settingsWrapper.setSettings(newSettings);
     this.log(`Settings changed: ${changedKeys.join(', ')}`);
   }
 

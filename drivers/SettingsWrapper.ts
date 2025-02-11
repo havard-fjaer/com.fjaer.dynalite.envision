@@ -7,12 +7,16 @@ export class SettingsWrapper {
     }
 
     async init() {
-        this.settings = this.device.getSettings();
-        this.settings.host = this.device.homey.settings.get('host');
+        this.setSettings(this.device.getSettings());
     }
 
     getSettings() {
         return this.settings;
+    }
+
+    setSettings(settings: any) {
+        this.settings = {...settings};
+        this.settings.host = this.device.homey.settings.get('host');
     }
 
     public async settingsOk() {
