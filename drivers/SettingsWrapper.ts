@@ -22,8 +22,8 @@ export class SettingsWrapper {
     public async settingsOk() {
         let errors = [];
         if (!this.settings.host || this.settings.host.length <= 1) errors.push('No host configured globally in app settings.');
-        if (!this.settings.area) errors.push('No area configured for device.');
-        if (!this.settings.channel) errors.push('No channel configured for device.');
+        if (!this.settings.area && this.settings.area !== 0) errors.push('No area configured for device.');
+        if (!this.settings.channel && this.settings.channel !== 0) errors.push('No channel configured for device.');
         if (!this.settings.fade) errors.push('No fade configured for device.');
     
         if (errors.length > 0) {
