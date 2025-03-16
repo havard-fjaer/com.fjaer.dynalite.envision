@@ -183,20 +183,6 @@
           }
         },
         {
-          "id": "fade",
-          "type": "number",
-          "highlight": true,
-          "label": {
-            "en": "Fade (ms)",
-            "no": "Toning (ms)"
-          },
-          "value": 200,
-          "hint": {
-            "en": "The time taken to fade the light from one state to another, in milli seconds.",
-            "no": "Tiden det tar å endre lyset fra én tilstand til en annen, i millisekunder."
-          }
-        },
-        {
           "id": "statusCheckerEnabled",
           "type": "checkbox",
           "label": {
@@ -271,20 +257,6 @@
           "hint": {
             "en": "The channel used to control the light.",
             "no": "Kanalen som brukes til å kontrollere lyset."
-          }
-        },
-        {
-          "id": "fade",
-          "type": "number",
-          "highlight": true,
-          "label": {
-            "en": "Fade (ms)",
-            "no": "Toning (ms)"
-          },
-          "value": 200,
-          "hint": {
-            "en": "The time taken to fade the light from one state to another, in milli seconds.",
-            "no": "Tiden det tar å endre lyset fra én tilstand til en annen, i millisekunder."
           }
         },
         {
